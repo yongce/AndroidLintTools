@@ -12,7 +12,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class LintXmlParserTest {
     @Test
-    public void testParse() throws Exception {
+    public void test_parse_allIssues() throws LintParserException {
+        URL url =  getClass().getResource("/lint-results-01.xml");
+        File lintResultXmlFile = new File(url.getFile());
+        LintXmlParser parser = new LintXmlParser.Builder().build();
+        LintReport report = parser.parse(lintResultXmlFile.getAbsolutePath());
+        List<LintIssue> issues = report.getLintIssues();
+        assertThat(issues.size(), equalTo(33));
+    }
+
+    @Test
+    public void test_parse_someIssues() throws Exception {
         URL url =  getClass().getResource("/lint-results-01.xml");
         File lintResultXmlFile = new File(url.getFile());
         LintXmlParser parser = new LintXmlParser.Builder()

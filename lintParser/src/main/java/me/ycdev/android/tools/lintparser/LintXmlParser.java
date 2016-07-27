@@ -136,7 +136,6 @@ public class LintXmlParser {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            Logger.log("start element: " + localName);
             if (mRootNode == null) {
                 // expect the first element is the root node "issues"
                 mRootNode = new XmlRootNode(localName, attributes);
@@ -145,9 +144,15 @@ public class LintXmlParser {
             } else if (XmlLocationNode.matchNode(localName)) {
                 XmlLocationNode locationNode = new XmlLocationNode(localName, attributes);
                 mCurIssueNode.addLocation(locationNode);
-                mRootNode.addIssue(mBuilder, mCurIssueNode);
             } else {
                 throw new SAXException("unexpected node name: " + localName);
+            }
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (XmlIssueNode.matchNode(localName)) {
+                mRootNode.addIssue(mBuilder, mCurIssueNode);
             }
         }
 

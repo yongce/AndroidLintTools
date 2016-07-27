@@ -28,6 +28,7 @@ public class XmlFileCleaner {
     }
 
     public void clean(int[] nodeLinesToRemove) {
+        Logger.log("Clean files %d items in %s", nodeLinesToRemove.length, mFilepath);
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(mFilepath));
@@ -51,6 +52,7 @@ public class XmlFileCleaner {
     String doClean(BufferedReader reader, int[] nodeLinesToRemove) throws IOException {
         // first, sort the node lines to remove
         Arrays.sort(nodeLinesToRemove);
+        Logger.log("lines to remove: " + Arrays.toString(nodeLinesToRemove));
 
         StringBuilder resultContent = new StringBuilder();
         String line;

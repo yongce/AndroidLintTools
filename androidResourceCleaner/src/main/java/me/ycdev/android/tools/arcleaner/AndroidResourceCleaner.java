@@ -6,6 +6,7 @@ import me.ycdev.android.tools.lintparser.LintReport;
 import me.ycdev.android.tools.lintparser.LintXmlParser;
 import me.ycdev.android.tools.lintparser.LintConstants.IssueId;
 import me.ycdev.android.tools.lintparser.LintParserException;
+import me.ycdev.android.tools.lintparser.utils.Logger;
 import me.ycdev.android.tools.lintparser.utils.XmlFileCleaner;
 
 import java.io.File;
@@ -64,6 +65,7 @@ public class AndroidResourceCleaner {
         try {
             LintReport result = parser.parse(mLintResultXmlFilepath);
             List<LintIssue> issuesList = result.getLintIssues();
+            Logger.log("count of issued found: %d", issuesList.size());;
 
             cleanResourceFiles(issuesList);
             if (!mCleanWholeFileOnly) {

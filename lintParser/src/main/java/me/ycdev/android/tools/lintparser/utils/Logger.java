@@ -8,4 +8,10 @@ public class Logger {
             System.out.println(message);
         }
     }
+
+    public static void log(String format, Object... args) {
+        if (DEBUG) {
+            System.out.println(String.format(format, args));
+        }
+    }
 }
