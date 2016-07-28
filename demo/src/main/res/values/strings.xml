@@ -2,4 +2,12 @@
     <string name="app_name">AndroidLintTools</string>
 
     <string name="action_settings">Settings</string>
+
+    <string-array name="timeout_values">
+        <item>15分钟</item>
+        <item>30分钟</item>
+        <item>1小时 </item>
+        <item>不限制</item>
+    </string-array>
+
 </resources>

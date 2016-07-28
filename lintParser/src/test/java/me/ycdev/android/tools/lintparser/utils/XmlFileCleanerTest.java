@@ -8,6 +8,7 @@ import java.io.StringReader;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -17,25 +18,25 @@ public class XmlFileCleanerTest {
         XmlFileCleaner cleaner = new XmlFileCleaner("fake_filepath");
 
         assertThat(cleaner.matchXmlBeginTag("    <dimen name=\"nav_header_vertical_spacing\">16dp</dimen>"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlBeginTag("  <string name=\"navigation_drawer_open\">"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlBeginTag(" <item"),
-                is(true));
+                notNullValue());
 
         assertThat(cleaner.matchXmlBeginTag("\t \t<dimen name=\"nav_header_vertical_spacing\">16dp</dimen>"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlBeginTag("\t \t <string name=\"navigation_drawer_open\">"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlBeginTag(" \t \t <dimen"),
-                is(true));
+                notNullValue());
 
         assertThat(cleaner.matchXmlBeginTag("<dimen name=\"nav_header_vertical_spacing\">16dp</dimen>"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlBeginTag("<string name=\"navigation_drawer_open\">"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlBeginTag("<dimen"),
-                is(true));
+                notNullValue());
     }
 
     @Test
@@ -43,23 +44,23 @@ public class XmlFileCleanerTest {
         XmlFileCleaner cleaner = new XmlFileCleaner("fake_filepath");
 
         assertThat(cleaner.matchXmlBeginTag("< dimen name=\"nav_header_vertical_spacing\">16dp</dimen>"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlBeginTag("<\tdimen name=\"nav_header_vertical_spacing\">16dp</dimen>"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlBeginTag("<<string name=\"navigation_drawer_open\">"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlBeginTag("< \tdimen"),
-                is(false));
+                nullValue());
 
         assertThat(cleaner.matchXmlBeginTag("x <dimen name=\"nav_header_vertical_spacing\">16dp</dimen>"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlBeginTag("< <string name=\"navigation_drawer_open\">"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlBeginTag("> <dimen"),
-                is(false));
+                nullValue());
 
         assertThat(cleaner.matchXmlBeginTag("<!-- Default screen margins, per the Android Design guidelines. -->"),
-                is(false));
+                nullValue());
     }
 
     @Test
@@ -67,31 +68,31 @@ public class XmlFileCleanerTest {
         XmlFileCleaner cleaner = new XmlFileCleaner("fake_filepath");
 
         assertThat(cleaner.matchXmlEndTag("    <dimen name=\"nav_header_vertical_spacing\">16dp</dimen>"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlEndTag(" Open navigation drawer</string>"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlEndTag(" </item>"),
-                is(true));
+                notNullValue());
 
         assertThat(cleaner.matchXmlEndTag("    <dimen name=\"nav_header_vertical_spacing\">16dp</dimen>   "),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlEndTag(" Open navigation drawer</string>  "),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlEndTag(" </item> "),
-                is(true));
+                notNullValue());
 
         assertThat(cleaner.matchXmlEndTag("    <dimen name=\"nav_header_vertical_spacing\">16dp</dimen>\t"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlEndTag(" Open navigation drawer</string>\t\t"),
-                is(true));
+                notNullValue());
         assertThat(cleaner.matchXmlEndTag(" </item> \t \t "),
-                is(true));
+                notNullValue());
 
-        assertThat(cleaner.matchXmlEndTag(" />"), is(true));
-        assertThat(cleaner.matchXmlEndTag("/> "), is(true));
-        assertThat(cleaner.matchXmlEndTag("\t/>  "), is(true));
-        assertThat(cleaner.matchXmlEndTag(" />\t\t"), is(true));
-        assertThat(cleaner.matchXmlEndTag(" /> \t \t "), is(true));
+        assertThat(cleaner.matchXmlEndTag(" />"), notNullValue());
+        assertThat(cleaner.matchXmlEndTag("/> "), notNullValue());
+        assertThat(cleaner.matchXmlEndTag("\t/>  "), notNullValue());
+        assertThat(cleaner.matchXmlEndTag(" />\t\t"), notNullValue());
+        assertThat(cleaner.matchXmlEndTag(" /> \t \t "), notNullValue());
     }
 
     @Test
@@ -99,31 +100,31 @@ public class XmlFileCleanerTest {
         XmlFileCleaner cleaner = new XmlFileCleaner("fake_filepath");
 
         assertThat(cleaner.matchXmlEndTag("    <dimen name=\"nav_header_vertical_spacing\">16dp</dimen>>"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlEndTag(" Open navigation drawer</string><"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlEndTag(" </item>aa"),
-                is(false));
+                nullValue());
 
         assertThat(cleaner.matchXmlEndTag("    <dimen name=\"nav_header_vertical_spacing\">16dp</dimen>  >"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlEndTag(" Open navigation drawer</string>  <"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlEndTag(" </item>\t<"),
-                is(false));
+                nullValue());
 
         assertThat(cleaner.matchXmlEndTag("    <dimen name=\"nav_header_vertical_spacing\">"),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlEndTag("    android:layout_width=\"match_parent\""),
-                is(false));
+                nullValue());
         assertThat(cleaner.matchXmlEndTag("    <dimen name=\"nav_header_vertical_spacing\">"),
-                is(false));
+                nullValue());
 
-        assertThat(cleaner.matchXmlEndTag(" /><"), is(false));
-        assertThat(cleaner.matchXmlEndTag(" /> <"), is(false));
-        assertThat(cleaner.matchXmlEndTag("\t/>\t<"), is(false));
-        assertThat(cleaner.matchXmlEndTag(" />\t\t<"), is(false));
-        assertThat(cleaner.matchXmlEndTag(" /> \t \t aaa"), is(false));
+        assertThat(cleaner.matchXmlEndTag(" /><"), nullValue());
+        assertThat(cleaner.matchXmlEndTag(" /> <"), nullValue());
+        assertThat(cleaner.matchXmlEndTag("\t/>\t<"), nullValue());
+        assertThat(cleaner.matchXmlEndTag(" />\t\t<"), nullValue());
+        assertThat(cleaner.matchXmlEndTag(" /> \t \t aaa"), nullValue());
     }
 
     @Test
@@ -291,4 +292,33 @@ public class XmlFileCleanerTest {
         assertThat(result, nullValue());
     }
 
+    @Test
+    public void test_clean_stringArray() throws IOException {
+        String xmlContent = "<resources>\n" +
+                "    <string name=\"app_name\">AndroidLintTools</string>\n" +
+                "\n" +
+                "    <string name=\"action_settings\">Settings</string>\n" +
+                "\n" +
+                "    <string-array name=\"timeout_values\">\n" +
+                "        <item>15分钟</item>\n" +
+                "        <item>30分钟</item>\n" +
+                "        <item>1小时 </item>\n" +
+                "        <item>不限制</item>\n" +
+                "    </string-array>\n" +
+                "\n" +
+                "</resources>\n";
+
+        BufferedReader reader = new BufferedReader(new StringReader(xmlContent));
+        int[] linesToRemove = new int[] {6};
+        String resultExpected = "<resources>\n" +
+                "    <string name=\"app_name\">AndroidLintTools</string>\n" +
+                "\n" +
+                "    <string name=\"action_settings\">Settings</string>\n" +
+                "\n" +
+                "\n" +
+                "</resources>\n";
+        XmlFileCleaner cleaner = new XmlFileCleaner("fake_filepath");
+        String result = cleaner.doClean(reader, linesToRemove);
+        assertThat(result, equalTo(resultExpected));
+    }
 }

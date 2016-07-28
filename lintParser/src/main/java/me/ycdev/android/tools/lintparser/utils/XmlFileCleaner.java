@@ -19,12 +19,14 @@ import java.util.regex.Pattern;
 public class XmlFileCleaner {
     private String mFilepath;
     private Pattern mTagBeginPattern;
-    private Pattern mTagEndPattern;
+    private Pattern mTagEndPattern1;
+    private Pattern mTagEndPattern2;
 
     public XmlFileCleaner(String filepath) {
         mFilepath = filepath;
         mTagBeginPattern = Pattern.compile("^[ \t]*<([^ \t<!]+)");
-        mTagEndPattern = Pattern.compile("(</[^ \t>]+>|/>)[ \t]*$");
+        mTagEndPattern1 = Pattern.compile("</([^ \t>]+)>[ \t]*$");
+        mTagEndPattern2 = Pattern.compile("(/>)[ \t]*$");
     }
 
     public void clean(int[] nodeLinesToRemove) {
@@ -59,9 +61,18 @@ public class XmlFileCleaner {
         int lineNumber = 0;
         int index = 0;
         boolean removeInProgress = false;
+        String beginTag = null;
 
         while ((line = reader.readLine()) != null) {
             lineNumber++;
+
+            if (removeInProgress) {
+                String endTag = matchXmlEndTag(line);
+                if (endTag != null && endTag.equals(beginTag)) {
+                    removeInProgress = false;
+                }
+                continue;
+            }
 
             if (index == nodeLinesToRemove.length) {
                 // no lines to remove anymore
@@ -69,20 +80,15 @@ public class XmlFileCleaner {
                 continue;
             }
 
-            if (removeInProgress) {
-                if (matchXmlEndTag(line)) {
-                    removeInProgress = false;
-                }
-                continue;
-            }
-
             if (lineNumber == nodeLinesToRemove[index]) {
                 index++; // prepare for next line to remove
 
                 // found the node line to remove
-                if (matchXmlBeginTag(line)) {
+                beginTag = matchXmlBeginTag(line);
+                if (beginTag != null) {
                     // remove the line
-                    if (!matchXmlEndTag(line)) {
+                    String endTag = matchXmlEndTag(line);
+                    if (endTag == null) {
                         // need to remove more lines
                         removeInProgress = true;
                     }
@@ -106,25 +112,27 @@ public class XmlFileCleaner {
     /**
      * Visible for testing
      */
-    boolean matchXmlBeginTag(String line) {
+    String matchXmlBeginTag(String line) {
         Matcher matcher = mTagBeginPattern.matcher(line);
-        boolean result = matcher.find();
-        if (result && Logger.DEBUG) {
-            Logger.log("matched begin tag str: " + line.substring(matcher.start(), matcher.end()));
+        if (matcher.find()) {
+            return matcher.group(1);
         }
-        return result;
+        return null;
     }
 
     /**
      * Visible for testing
      */
-    boolean matchXmlEndTag(String line) {
-        Matcher matcher = mTagEndPattern.matcher(line);
-        boolean result = matcher.find();
-        if (result && Logger.DEBUG) {
-            Logger.log("matched end tag str: " + line.substring(matcher.start(), matcher.end()));
+    String matchXmlEndTag(String line) {
+        Matcher matcher = mTagEndPattern1.matcher(line);
+        if (matcher.find()) {
+            return matcher.group(1);
         }
-        return result;
+        matcher = mTagEndPattern2.matcher(line);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 
     /**
