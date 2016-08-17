@@ -2,6 +2,8 @@
 
 This project aims to provide tools for Android resources clean (for example, clean unused resources).
 
+WARNING: You should use the "Refactor > Remove Unused Resources..." feature in Android Studio to remove unused resources.
+
 ## Install the tools
 
 For example, install the tools to "~/bin" (if it's in your machine's PATH).
