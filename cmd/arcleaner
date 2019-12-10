@@ -1,13 +1,6 @@
 #!/bin/sh
 
-if [ $# -eq 0 ]; then
-    echo "Usage: arcleaner <lint result XML file> [<true|false> <fileMatchReg>]"
-    exit
-fi
-
-LINT_RESULT_XML_FILE=$1
-
-echo "Clean unused resources according to $LINT_RESULT_XML_FILE..."
+CMD_NAME="arcleaner"
 
 kernel_name=`uname -s`
 IS_MAC_OS=false
@@ -27,4 +20,10 @@ fi
 CMD_DIR=`dirname "$REAL_PATH"`
 JAR_PATH=$CMD_DIR/androidResourceCleaner.jar
 
-java -jar $JAR_PATH $@
+if [ $# -eq 0 ]; then
+    java -jar $JAR_PATH $CMD_NAME
+else
+    LINT_RESULT_XML_FILE=$1
+    echo "Clean unused resources according to $LINT_RESULT_XML_FILE..."
+    java -jar $JAR_PATH $CMD_NAME $@
+fi

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="unused_strings1">未使用demo字符串1</string>
+
+    <string-array name="timeout_values">
+        <item>15分钟</item>
+        <item>30分钟</item>
+        <item>1小时 </item>
+        <item>不限制</item>
+    </string-array>
+</resources>

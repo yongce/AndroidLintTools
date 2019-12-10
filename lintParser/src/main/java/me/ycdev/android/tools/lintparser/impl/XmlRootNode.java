@@ -32,7 +32,7 @@ public class XmlRootNode {
             throw new SAXException("Format version not number: " + numberStr);
         }
 
-        if (formatVersion != 4) {
+        if (formatVersion != 4 && formatVersion != 5) {
             throw new SAXException("Not supported format version: " + numberStr);
         }
     }

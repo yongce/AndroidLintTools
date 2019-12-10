@@ -1,17 +1,9 @@
 apply plugin: 'java'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
     // Dependencies for local unit tests
-    testCompile 'junit:junit:' + rootProject.ext.junitVersion
-    testCompile 'org.mockito:mockito-core:' + rootProject.ext.mockitoVersion
-    testCompile 'org.hamcrest:hamcrest-core:' + rootProject.ext.hamcrestVersion
+    testImplementation deps.test.core
+    testImplementation deps.test.junit
+    testImplementation deps.test.mockitoCore
+    testImplementation deps.test.hamcrestCore
 }
-
-// workaround for issue: https://code.google.com/p/android/issues/detail?id=64887
-task copyTestResources(type: Copy) {
-    from sourceSets.test.resources
-    into sourceSets.test.output.classesDir
-}
-processTestResources.dependsOn copyTestResources

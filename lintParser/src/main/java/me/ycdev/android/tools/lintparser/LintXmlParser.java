@@ -23,14 +23,12 @@ import me.ycdev.android.tools.lintparser.utils.Logger;
 
 public class LintXmlParser {
     private Builder mBuilder;
-    private String mXmlFilePath;
 
     private LintXmlParser(Builder builder) {
         mBuilder = builder;
     }
 
     public LintReport parse(String xmlFilePath) throws LintParserException {
-        mXmlFilePath = xmlFilePath;
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(xmlFilePath);
@@ -77,7 +75,7 @@ public class LintXmlParser {
             return watchIssues(Arrays.asList(issues));
         }
 
-        public Builder watchIssues(List<String> issues) {
+        Builder watchIssues(List<String> issues) {
             checkForChange();
             if (mIssueIds == null) {
                 mIssueIds = new HashSet<>();
@@ -125,12 +123,12 @@ public class LintXmlParser {
         private XmlIssueNode mCurIssueNode;
 
         @Override
-        public void startDocument() throws SAXException {
+        public void startDocument() {
             Logger.log("start document");
         }
 
         @Override
-        public void endDocument() throws SAXException {
+        public void endDocument() {
             Logger.log("end document");
         }
 
@@ -150,13 +148,13 @@ public class LintXmlParser {
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        public void endElement(String uri, String localName, String qName) {
             if (XmlIssueNode.matchNode(localName)) {
                 mRootNode.addIssue(mBuilder, mCurIssueNode);
             }
         }
 
-        public XmlRootNode getRootNode() {
+        XmlRootNode getRootNode() {
             return mRootNode;
         }
     }

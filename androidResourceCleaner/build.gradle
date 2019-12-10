@@ -1,8 +1,12 @@
 apply plugin: 'java'
 
+configurations {
+    extraLibs
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':lintParser')
+    implementation project(':lintParser')
+    extraLibs project(':lintParser')
 }
 
 jar {
@@ -10,9 +14,9 @@ jar {
         attributes("Main-Class": "me.ycdev.android.tools.arcleaner.AndroidResourceCleaner")
     }
 
-    // include the dependencies
+    // include the extraLibs
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 

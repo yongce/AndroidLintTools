@@ -8,6 +8,7 @@ import me.ycdev.android.tools.lintparser.LintConstants.IssueId;
 import me.ycdev.android.tools.lintparser.LintParserException;
 import me.ycdev.android.tools.lintparser.utils.Logger;
 import me.ycdev.android.tools.lintparser.utils.XmlFileCleaner;
+import me.ycdev.android.tools.lintparser.utils.XmlLineNumbersParser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,28 +18,45 @@ import java.util.List;
 import java.util.Map;
 
 public class AndroidResourceCleaner {
-    public static void main(String[] args) {
-        System.out.println("ARCleaner args: " + Arrays.toString(args));
+    private static final String ARC_VERSION = "1.1.0";
 
-        String lintResultXmlFilepath = args[0];
+    public static void main(String[] args) {
+        System.out.println("ARCleaner version: " + ARC_VERSION);
+        if (args.length < 1) {
+            System.out.println("No cmd name specified in shell script!");
+            return;
+        }
+        if (args.length == 1) {
+            String cmdName = args[0];
+            System.out.println(String.format("Usage: %s <lint result XML file> [<true|false> <fileMatchReg>]", cmdName));
+            return;
+        }
+
+        System.out.println("args: " + Arrays.toString(args));
+        System.out.println("working...");
+
+        String lintResultXmlFilepath = args[1];
         boolean cleanWholeFileOnly = false;
-        if (args.length > 1) {
-            cleanWholeFileOnly = Boolean.parseBoolean(args[1]);
+        if (args.length > 2) {
+            cleanWholeFileOnly = Boolean.parseBoolean(args[2]);
         }
         String fileMatchReg = null;
-        if (args.length > 2) {
-            fileMatchReg = args[2];
+        if (args.length > 3) {
+            fileMatchReg = args[3];
         }
 
         AndroidResourceCleaner cleaner = new AndroidResourceCleaner(lintResultXmlFilepath,
                 cleanWholeFileOnly, fileMatchReg);
         cleaner.execute();
+
+        System.out.println("done");
     }
 
     private String mLintResultXmlFilepath;
     private boolean mCleanWholeFileOnly;
     private String mFileMatchReg;
 
+    @SuppressWarnings("WeakerAccess")
     public AndroidResourceCleaner(String lintResultXmlFilepath, boolean cleanWholeFileOnly,
             String fileMatchReg) {
         mLintResultXmlFilepath = lintResultXmlFilepath;
@@ -46,19 +64,14 @@ public class AndroidResourceCleaner {
         mFileMatchReg = fileMatchReg;
     }
 
-    public void execute() {
+    private void execute() {
         LintXmlParser.Builder builder = new LintXmlParser.Builder()
                 .watchIssues(IssueId.UNUSED_RESOURCES);
         if (mCleanWholeFileOnly) {
             builder.enableWholeFileOnly();
         }
         if (mFileMatchReg != null && mFileMatchReg.length() > 0) {
-            builder.setFileFilter(new LintXmlParser.FileFilter() {
-                @Override
-                public boolean accept(String filepath) {
-                    return filepath.matches(mFileMatchReg);
-                }
-            });
+            builder.setFileFilter(filepath -> filepath.matches(mFileMatchReg));
         }
 
         LintXmlParser parser = builder.build();
@@ -122,8 +135,13 @@ public class AndroidResourceCleaner {
             linesToRemove[index++] = location.getLineNumber();
         }
 
-        XmlFileCleaner xmlFileCleaner = new XmlFileCleaner(fileLocations.get(0).getFilePath());
-        xmlFileCleaner.clean(linesToRemove);
+        try {
+            linesToRemove = XmlLineNumbersParser.parse(fileLocations.get(0).getFilePath(), linesToRemove);
+            XmlFileCleaner xmlFileCleaner = new XmlFileCleaner(fileLocations.get(0).getFilePath());
+            xmlFileCleaner.clean(linesToRemove);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

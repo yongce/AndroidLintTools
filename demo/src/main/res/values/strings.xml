@@ -1,13 +1,14 @@
 <resources>
-    <string name="app_name">AndroidLintTools</string>
+    <string name="app_name" translatable="false">AndroidLintTools</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings" translatable="false">Settings</string>
 
     <string-array name="timeout_values">
-        <item>15分钟</item>
-        <item>30分钟</item>
-        <item>1小时 </item>
-        <item>不限制</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour </item>
+        <item>Not limited</item>
     </string-array>
 
+    <string name="unused_strings1">Unused demo string 1</string>
 </resources>
